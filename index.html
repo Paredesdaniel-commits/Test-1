@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KI – ein Feuerwerk an Möglichkeiten</title>
+<meta name="description" content="Acht Dinge, die Künstliche Intelligenz heute kann – zum Antippen, mit Beispiel-Prompts zum Kopieren.">
+<style>
+  :root {
+    --night: #070b1e;
+    --night-2: #101736;
+    --card: rgba(20, 28, 64, 0.82);
+    --line: rgba(255, 255, 255, 0.12);
+    --text: #f2f4ff;
+    --muted: #aab2d8;
+    --gold: #ffd166;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    color: var(--text);
+    background: radial-gradient(120% 80% at 50% 0%, var(--night-2) 0%, var(--night) 60%) fixed var(--night);
+    line-height: 1.55;
+    -webkit-text-size-adjust: 100%;
+  }
+  #sky {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+  main, footer { position: relative; z-index: 1; }
+
+  .hero {
+    min-height: 100vh;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 24px 20px 72px;
+  }
+  .eyebrow {
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-size: 0.78rem;
+    color: var(--gold);
+    margin: 0 0 14px;
+  }
+  h1 {
+    font-size: clamp(2.2rem, 9vw, 4.4rem);
+    line-height: 1.08;
+    margin: 0 0 18px;
+    text-wrap: balance;
+    text-shadow: 0 2px 24px rgba(7, 11, 30, 0.9);
+  }
+  h1 span {
+    background: linear-gradient(90deg, #ffd166, #ff6b9d, #7cc4ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .lead {
+    max-width: 34rem;
+    margin: 0 auto 28px;
+    color: var(--muted);
+    font-size: 1.08rem;
+    text-shadow: 0 1px 12px rgba(7, 11, 30, 0.9);
+  }
+  .btn {
+    font: inherit;
+    font-weight: 600;
+    color: #1a1230;
+    background: var(--gold);
+    border: 0;
+    border-radius: 999px;
+    padding: 14px 26px;
+    cursor: pointer;
+    box-shadow: 0 6px 28px rgba(255, 209, 102, 0.35);
+  }
+  .btn:active { transform: scale(0.97); }
+  .hint { margin-top: 18px; font-size: 0.88rem; color: var(--muted); }
+  .scroll {
+    position: absolute;
+    bottom: 22px;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+  .hero { position: relative; }
+
+  section { padding: 56px 20px; max-width: 68rem; margin: 0 auto; }
+  h2 { font-size: clamp(1.5rem, 5.5vw, 2.2rem); margin: 0 0 8px; text-wrap: balance; }
+  .sub { color: var(--muted); margin: 0 0 28px; max-width: 40rem; }
+
+  .grid {
+    display: grid;
+    gap: 14px;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--c);
+    border-radius: 16px;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+  .card-head {
+    font: inherit;
+    color: inherit;
+    text-align: left;
+    width: 100%;
+    background: none;
+    border: 0;
+    padding: 18px 18px 16px;
+    cursor: pointer;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 4px 12px;
+    align-items: center;
+  }
+  .icon { font-size: 1.6rem; grid-row: span 2; }
+  .card-head strong { font-size: 1.08rem; }
+  .card-head small { grid-column: 2; color: var(--muted); font-size: 0.92rem; }
+  .chev {
+    grid-row: 1 / span 2;
+    grid-column: 3;
+    color: var(--c);
+    font-size: 1.3rem;
+    transition: transform 0.2s;
+  }
+  .card-head[aria-expanded="true"] .chev { transform: rotate(45deg); }
+  .card-body { padding: 0 18px 18px; }
+  .card-body[hidden] { display: none; }
+  .card-body p { margin: 0 0 10px; font-size: 0.82rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+  blockquote {
+    margin: 0 0 12px;
+    padding: 12px 14px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    font-size: 0.95rem;
+  }
+  .copy {
+    font: inherit;
+    font-size: 0.9rem;
+    color: var(--text);
+    background: transparent;
+    border: 1px solid var(--c);
+    border-radius: 999px;
+    padding: 8px 16px;
+    cursor: pointer;
+  }
+
+  .limits { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+  .limit {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 18px;
+  }
+  .limit h3 { margin: 0 0 6px; font-size: 1.02rem; }
+  .limit p { margin: 0; color: var(--muted); font-size: 0.95rem; }
+
+  footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.88rem;
+    padding: 32px 20px 48px;
+  }
+  footer a { color: var(--text); }
+
+  :focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .chev { transition: none; }
+  }
+</style>
+</head>
+<body>
+<canvas id="sky" aria-hidden="true"></canvas>
+
+<main>
+  <header class="hero" id="top">
+    <p class="eyebrow">Künstliche Intelligenz</p>
+    <h1>Ein <span>Feuerwerk</span> an Möglichkeiten</h1>
+    <p class="lead">Schreiben, programmieren, analysieren, übersetzen: KI kann heute erstaunlich viel. Hier sind acht Beispiele zum Ausprobieren.</p>
+    <button class="btn" id="ignite" type="button">Feuerwerk zünden</button>
+    <p class="hint">Oder tippe irgendwo auf den Himmel.</p>
+    <a class="scroll" href="#moeglichkeiten">Zu den Möglichkeiten ↓</a>
+  </header>
+
+  <section id="moeglichkeiten">
+    <h2>Acht Raketen, acht Möglichkeiten</h2>
+    <p class="sub">Tippe eine Karte an. Du bekommst einen Beispiel-Prompt, den du kopieren und in einer KI deiner Wahl testen kannst.</p>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <section id="grenzen">
+    <h2>Und wo es nicht knallt</h2>
+    <p class="sub">Ein Feuerwerk ist schön, aber man sollte wissen, wo man steht. Drei Dinge, die du im Blick behalten solltest.</p>
+    <div class="limits">
+      <div class="limit">
+        <h3>KI kann sich irren</h3>
+        <p>Antworten klingen oft sicherer, als sie sind. Prüfe Fakten, Zahlen und Quellen, bevor du dich darauf verlässt.</p>
+      </div>
+      <div class="limit">
+        <h3>Vertrauliches bleibt draußen</h3>
+        <p>Gib keine Passwörter, Kundendaten oder Firmengeheimnisse ein, wenn du nicht weißt, was mit den Daten passiert.</p>
+      </div>
+      <div class="limit">
+        <h3>Die Verantwortung bleibt bei dir</h3>
+        <p>KI liefert Entwürfe und Vorschläge. Ob das Ergebnis passt, entscheidest am Ende du.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  Gebaut mit Claude Code als Übung in einem Git-Tutorial. · <a href="#top">Nach oben</a>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  var ITEMS = [
+    { icon: "✍️", color: "#ffd166", title: "Schreiben", text: "Entwürfe für Mails, Texte und Reden.",
+      prompt: "Schreibe eine freundliche, kurze E-Mail, in der ich einen Termin um eine Woche verschiebe. Biete zwei Ersatztermine an." },
+    { icon: "💻", color: "#7cc4ff", title: "Programmieren", text: "Code schreiben, erklären und reparieren.",
+      prompt: "Erkläre mir Schritt für Schritt, was eine for-Schleife ist, und zeige ein einfaches Beispiel in Python." },
+    { icon: "📊", color: "#06d6a0", title: "Analysieren", text: "Daten und lange Dokumente auswerten.",
+      prompt: "Ich füge gleich einen langen Text ein. Fasse ihn in fünf Stichpunkten zusammen und nenne die drei wichtigsten offenen Fragen." },
+    { icon: "🌍", color: "#ff6b9d", title: "Übersetzen", text: "Sprachen wechseln, Ton treffen.",
+      prompt: "Übersetze den folgenden Text ins Englische. Der Ton soll höflich, aber locker sein, wie unter Kollegen." },
+    { icon: "🎓", color: "#c792ea", title: "Lernen", text: "Ein geduldiger Tutor für jedes Thema.",
+      prompt: "Erkläre mir, wie Photosynthese funktioniert, als wäre ich zwölf. Stelle mir danach drei Quizfragen dazu." },
+    { icon: "💡", color: "#ff9f43", title: "Ideen finden", text: "Brainstorming ohne leeres Blatt.",
+      prompt: "Gib mir zehn ungewöhnliche Ideen für ein Team-Event mit kleinem Budget. Sortiere sie nach Aufwand." },
+    { icon: "🗂️", color: "#4dd0e1", title: "Organisieren", text: "Pläne, Listen und Struktur.",
+      prompt: "Erstelle mir einen realistischen Wochenplan, um in vier Wochen die Grundlagen von Git zu lernen. 20 Minuten pro Tag." },
+    { icon: "🤖", color: "#f78c6c", title: "Agenten", text: "KI, die Aufgaben selbst erledigt.",
+      prompt: "Durchsuche dieses Projekt, finde alle Tippfehler in den Texten und schlage die Korrekturen als Liste vor." }
+  ];
+
+  /* ---------- Karten ---------- */
+  var grid = document.getElementById("grid");
+  ITEMS.forEach(function (item, i) {
+    var card = document.createElement("article");
+    card.className = "card";
+    card.style.setProperty("--c", item.color);
+
+    var head = document.createElement("button");
+    head.type = "button";
+    head.className = "card-head";
+    head.setAttribute("aria-expanded", "false");
+    head.setAttribute("aria-controls", "body-" + i);
+
+    var icon = document.createElement("span");
+    icon.className = "icon";
+    icon.setAttribute("aria-hidden", "true");
+    icon.textContent = item.icon;
+    var title = document.createElement("strong");
+    title.textContent = item.title;
+    var text = document.createElement("small");
+    text.textContent = item.text;
+    var chev = document.createElement("span");
+    chev.className = "chev";
+    chev.setAttribute("aria-hidden", "true");
+    chev.textContent = "+";
+    head.append(icon, title, chev, text);
+
+    var body = document.createElement("div");
+    body.className = "card-body";
+    body.id = "body-" + i;
+    body.hidden = true;
+    var label = document.createElement("p");
+    label.textContent = "Beispiel-Prompt";
+    var quote = document.createElement("blockquote");
+    quote.textContent = item.prompt;
+    var copy = document.createElement("button");
+    copy.type = "button";
+    copy.className = "copy";
+    copy.textContent = "Kopieren";
+    body.append(label, quote, copy);
+
+    head.addEventListener("click", function (e) {
+      var open = head.getAttribute("aria-expanded") === "true";
+      head.setAttribute("aria-expanded", String(!open));
+      body.hidden = open;
+      if (!open) {
+        var r = head.getBoundingClientRect();
+        var x = e.clientX || r.left + r.width / 2;
+        var y = e.clientY || r.top + r.height / 2;
+        burst(x, y, item.color);
+      }
+    });
+
+    copy.addEventListener("click", function () {
+      copyText(item.prompt).then(function (ok) {
+        copy.textContent = ok ? "Kopiert ✓" : "Bitte von Hand markieren";
+        setTimeout(function () { copy.textContent = "Kopieren"; }, 1800);
+      });
+    });
+
+    card.append(head, body);
+    grid.appendChild(card);
+  });
+
+  function copyText(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+      return navigator.clipboard.writeText(text).then(function () { return true; }, function () { return false; });
+    }
+    var ta = document.createElement("textarea");
+    ta.value = text;
+    ta.style.position = "fixed";
+    ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.select();
+    var ok = false;
+    try { ok = document.execCommand("copy"); } catch (err) { ok = false; }
+    ta.remove();
+    return Promise.resolve(ok);
+  }
+
+  /* ---------- Feuerwerk ---------- */
+  var canvas = document.getElementById("sky");
+  var ctx = canvas.getContext("2d");
+  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var COLORS = ITEMS.map(function (i) { return i.color; });
+  var rockets = [];
+  var sparks = [];
+  var W = 0, H = 0, running = false, heroVisible = true, lastAuto = 0;
+
+  function resize() {
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = window.innerWidth;
+    H = window.innerHeight;
+    canvas.width = Math.round(W * dpr);
+    canvas.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  resize();
+  window.addEventListener("resize", resize);
+
+  function pick() { return COLORS[Math.floor(Math.random() * COLORS.length)]; }
+
+  function launch(tx, ty, color) {
+    rockets.push({ x: tx + (Math.random() - 0.5) * 60, y: H + 10, tx: tx, ty: ty, color: color || pick() });
+    start();
+  }
+
+  function burst(x, y, color) {
+    var n = reduced ? 0 : 56;
+    for (var i = 0; i < n; i++) {
+      var a = (Math.PI * 2 * i) / n + Math.random() * 0.2;
+      var s = 1.5 + Math.random() * 3.6;
+      sparks.push({ x: x, y: y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: 1, decay: 0.012 + Math.random() * 0.012, color: color || pick() });
+    }
+    if (sparks.length > 900) sparks.splice(0, sparks.length - 900);
+    start();
+  }
+
+  function start() {
+    if (!running && !reduced) {
+      running = true;
+      requestAnimationFrame(frame);
+    }
+  }
+
+  function frame(now) {
+    if (heroVisible && !document.hidden && now - lastAuto > 1100) {
+      lastAuto = now;
+      launch(W * (0.15 + Math.random() * 0.7), H * (0.12 + Math.random() * 0.3));
+    }
+
+    ctx.globalCompositeOperation = "destination-out";
+    ctx.fillStyle = "rgba(0,0,0,0.18)";
+    ctx.fillRect(0, 0, W, H);
+    ctx.globalCompositeOperation = "lighter";
+
+    for (var i = rockets.length - 1; i >= 0; i--) {
+      var r = rockets[i];
+      r.x += (r.tx - r.x) * 0.06;
+      r.y += (r.ty - r.y) * 0.06 - 1.5;
+      ctx.fillStyle = r.color;
+      ctx.beginPath();
+      ctx.arc(r.x, r.y, 2, 0, Math.PI * 2);
+      ctx.fill();
+      if (r.y <= r.ty + 6) {
+        rockets.splice(i, 1);
+        burst(r.x, r.y, r.color);
+      }
+    }
+
+    for (var j = sparks.length - 1; j >= 0; j--) {
+      var p = sparks[j];
+      p.vx *= 0.985;
+      p.vy = p.vy * 0.985 + 0.035;
+      p.x += p.vx;
+      p.y += p.vy;
+      p.life -= p.decay;
+      if (p.life <= 0) { sparks.splice(j, 1); continue; }
+      ctx.globalAlpha = p.life;
+      ctx.fillStyle = p.color;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 1.8, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+
+    if (rockets.length || sparks.length || (heroVisible && !document.hidden)) {
+      requestAnimationFrame(frame);
+    } else {
+      ctx.clearRect(0, 0, W, H);
+      running = false;
+    }
+  }
+
+  var hero = document.querySelector(".hero");
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver(function (entries) {
+      heroVisible = entries[0].isIntersecting;
+      if (heroVisible) start();
+    }, { threshold: 0.15 }).observe(hero);
+  }
+  document.addEventListener("visibilitychange", function () { if (!document.hidden) start(); });
+
+  hero.addEventListener("click", function (e) {
+    if (e.target.closest("a, button")) return;
+    launch(e.clientX, e.clientY);
+  });
+
+  document.getElementById("ignite").addEventListener("click", function () {
+    for (var i = 0; i < 6; i++) {
+      (function (k) {
+        setTimeout(function () {
+          launch(W * (0.12 + Math.random() * 0.76), H * (0.1 + Math.random() * 0.35));
+        }, k * 140);
+      })(i);
+    }
+  });
+
+  if (reduced) {
+    document.getElementById("ignite").hidden = true;
+    document.querySelector(".hint").hidden = true;
+  } else {
+    start();
+  }
+})();
+</script>
+</body>
+</html>
